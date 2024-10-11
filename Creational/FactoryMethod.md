@@ -1,19 +1,29 @@
 ## Factory method
 
-Problem: We have a service that implement an specific bussines logic, however, depending on external input, this service needs to instantiate one of many specific classes, as it gets more popular, the number of specific classes increment, by the way the logic for instantiating the one that the service needs gets updated every single time, making it error prone, dependant of every single class and even worse if the object constructors are complicated.
+Problem:
+We have a service that implements specific business logic. However, depending on the case, the service needs an instance of a particular family of classes. As complexity grows, the family of classes expands with more members. As a result, the logic for deciding which class to instantiate gets updated frequently, making the main service error-prone and dependent on every member of the family. This situation becomes even worse when the constructors are complex.
 
-Solution: Factory method provide a mechanism for simplifying it, making it at the same time more extensible, decoupled the main service from the specific class implementations and encapsulated. The way we achieve all these capabilities is by:
-    * Defining an common interface for all the specific class implementations.
-    * Defining a method in the service that defines an abstrach method that returns an instance of the Product interface.
-    * Defining a subclass that inherit from the main service one (Creator, Specific Factory) and implement the abstract method (Responsible of the product Interface instantiation)
-    * Adapt the client code for using the main service as base, that way we can use any of the concrete creators at runtime.
+There are several issues here:
 
-Despite this is the way defined by the GOF there is a more simple approach called SimpleFactory, this is basically an static method that return an instance of the specific implementation based on the parameters, this way we can avoid creating many classes.
+* We are violating the open-closed principle by updating the main service every time a new class is added.
+* The service becomes dependent on each member of the class family.
 
-Good to highlight: Create a Concrete creator is not mandatory for each specific class, we can return an object or anothe depending on the input (yes, like a Abstract factory)
+Solution:
+The Factory Method provides a mechanism to simplify this while making the system more extensible and decoupled from specific product class implementations. Instead of directly constructing objects with the `new()` operator, we replace those calls with a specialized factory method in the service(here is important to notice the difference between requesting a new object and creating it). At first glance, this change may seem superficial—it just moves the constructor call from one part of the program to another. However, the key benefit is that we can now override the method in a subclass, allowing us to change the class of the objects being created without altering the main service.
+
+While this is the traditional approach defined by the Gang of Four (GoF), there’s a simpler alternative called Simple Factory. This approach uses a static method to return an instance of a specific implementation based on input parameters, allowing us to avoid creating multiple subclasses.
+
+Key point:
+It’s not mandatory to create a concrete creator for each specific class. The factory can return different objects based on the input (similar to an Abstract Factory pattern)
+
+**Author notes:**
+
+*Scenarios where the product has a simple construction are easy to adrress using generics and constrains, however, when they gets complex, like introducing services, configurations and any other dependencies, generic not solves the problem.*
+
+*Factory method attempt is to abstract and decouple the concret product creation, not for improving the decision making of which product create, for this we have strategies like factory selector, DI, Dictionaries and even a builder.*
 
 References:
-[SourceMaking](https://sourcemaking.com/design_patterns/factory_method)
-[Refactoring guru](https://refactoring.guru/design-patterns/factory-method/csharp/example)
-[Geek for geeks](https://geeksforgeeks.org/factory-method-for-designing-pattern/#advantages-of-factory-method-design-pattern)
-Dessign patterns book second edition by O'Really
+ * [SourceMaking](https://sourcemaking.com/design_patterns/factory_method)
+ * [Refactoring guru](https://refactoring.guru/design-patterns/factory-method/csharp/example)
+ * [Geek for geeks](https://geeksforgeeks.org/factory-method-for-designing-pattern/#advantages-of-factory-method-design-pattern)
+ * Dessign patterns book second edition by O'Really
